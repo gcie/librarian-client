@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { AlertController, NavController } from 'ionic-angular';
+import { DirectoryItem } from '../../models/directoryItem';
+import { LibraryProvider } from '../../providers/library/library';
 
 @Component({
   selector: 'page-home',
@@ -7,8 +9,18 @@ import { NavController } from 'ionic-angular';
 })
 export class HomePage {
 
-  constructor(public navCtrl: NavController) {
+  private rootDir: DirectoryItem[];
 
+  constructor(
+    public navCtrl: NavController,
+    public library: LibraryProvider,
+    public alertCtrl: AlertController
+  ) {
+    library.readDir('/')
+      .then((directory) => {
+        this.rootDir = directory;
+        alertCtrl.create({title: 'Info', subTitle: directory[0].name }).present();
+      });
   }
 
 }
