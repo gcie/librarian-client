@@ -16,11 +16,10 @@ export class HomePage {
     public library: LibraryProvider,
     public alertCtrl: AlertController
   ) {
-    library.readDir('/')
+    library.readFolders('')
       .then((directory) => {
         this.rootDir = directory;
-        alertCtrl.create({title: 'Info', subTitle: directory[0].name }).present();
+        // alertCtrl.create({title: 'Info', subTitle: directory[0].name }).present();
       });
   }
-
 }

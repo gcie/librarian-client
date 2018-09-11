@@ -22,8 +22,11 @@ export class LibraryProvider {
   ) {
     
   }
+  readFolders(dir: string): Promise<DirectoryItem[]> {
+    return new Promise((resolve, reject) => resolve([]));
+  }
 
-  readDir(dir): Promise<DirectoryItem[]> {
+  readDir(dir: string): Promise<DirectoryItem[]> {
     return new Promise((resolve, reject) => {
       this.ftp.connect(this.hostname, this.username, this.password)
         .then(() => this.ftp.ls(dir))

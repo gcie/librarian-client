@@ -8,6 +8,7 @@ import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
 import { LibraryProvider } from '../providers/library/library';
 import { MyApp } from './app.component';
+import { MockLibraryProvider } from '../mocks/providers/library';
 
 
 
@@ -32,7 +33,7 @@ import { MyApp } from './app.component';
     SplashScreen,
     FTP,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    {provide: LibraryProvider, useClass: LibraryProvider}
+    {provide: LibraryProvider, useClass: MockLibraryProvider}
   ]
 })
 export class AppModule {}
