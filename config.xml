@@ -85,4 +85,5 @@
     <plugin name="cordova-plugin-ftp" spec="^1.1.1" />
     <engine name="browser" spec="5.0.4" />
     <engine name="android" spec="7.0.0" />
+    <plugin name="cordova-plugin-file" spec="^6.0.1" />
 </widget>

@@ -3,16 +3,21 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Librarian</ion-title>
+    <ion-title>{{currentPath}}</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="backClickHandler()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-
+<ion-content>
   <ion-content>
     <ion-list>
-      <button ion-item *ngFor="let item of rootDir">
-        {{item.name}}
+      <button ion-item *ngFor="let item of currentDir" (click)="itemClickHandler(item)">
+        <ion-label>{{item.name}}</ion-label>
+        <ion-toggle></ion-toggle>
       </button>
     </ion-list>
   </ion-content>

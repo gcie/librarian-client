@@ -9,7 +9,7 @@ import { ListPage } from '../pages/list/list';
 import { LibraryProvider } from '../providers/library/library';
 import { MyApp } from './app.component';
 import { MockLibraryProvider } from '../mocks/providers/library';
-
+import { File } from '@ionic-native/file';
 
 
 @NgModule({
@@ -32,6 +32,7 @@ import { MockLibraryProvider } from '../mocks/providers/library';
     StatusBar,
     SplashScreen,
     FTP,
+    File,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     {provide: LibraryProvider, useClass: MockLibraryProvider}
   ]

@@ -77,16 +77,8 @@ export class MockLibraryProvider {
     }];
 
     readFolders(dir: string): Promise<DirectoryItem[]> {
-        return new Promise((resolve, reject) => {
-            var path = dir.split('/');
-            var currentDir = this.files;
-            for(var folder of path) {
-                currentDir = currentDir.filter((x) => x.name === folder)[0].content;
-                if(currentDir === undefined) {
-                    reject('Invalid path');
-                }
-            }
-            resolve(currentDir.filter((x) => x.type === 1));
+        return this.readDir(dir).then((directory) => {
+            return directory.filter((x) => x.type === 1);
         });
     }
 
