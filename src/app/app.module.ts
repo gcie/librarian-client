@@ -10,6 +10,7 @@ import { LibraryProvider } from '../providers/library/library';
 import { MyApp } from './app.component';
 import { MockLibraryProvider } from '../mocks/providers/library';
 import { File } from '@ionic-native/file';
+import { Utils } from '../providers/utils/utils';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { File } from '@ionic-native/file';
     FTP,
     File,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    {provide: LibraryProvider, useClass: MockLibraryProvider}
+    {provide: LibraryProvider, useClass: LibraryProvider},
+    Utils
   ]
 })
 export class AppModule {}

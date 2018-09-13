@@ -3,6 +3,7 @@ import { AlertController, NavController } from 'ionic-angular';
 import { DirectoryItem } from '../../models/directoryItem';
 import { LibraryProvider } from '../../providers/library/library';
 import { File } from '@ionic-native/file';
+import { FTP } from '@ionic-native/ftp';
 
 @Component({
   selector: 'page-home',
@@ -17,11 +18,28 @@ export class HomePage {
     public navCtrl: NavController,
     public library: LibraryProvider,
     public alertCtrl: AlertController,
-    public file: File
+    public file: File,
+    public ftp: FTP
   ) { }
 
   ionViewDidLoad() {
-    this.loadDirectory();
+    // this.loadDirectory();
+    console.log('### externalRootDir:', this.file.externalRootDirectory);
+    this.library.upload('filetree.json', 'filetree.json');
+
+    /* this.library.readDeep().then((tree) => {
+      this.file.writeFile(this.file.externalRootDirectory, 'filetree.json', JSON.stringify(tree), { replace: true }).then(() => {
+        this.ftp.upload(this.file.externalRootDirectory + 'filetree.json', '/filetree.json').subscribe(res => {
+          console.log('### uploading status:', res);
+        });
+      })
+      .catch(ex => {
+        console.log('### writeFileException:', ex);
+      });
+    })
+    .catch(ex => {
+      console.log('### readDeepException:', ex);
+    }); */
   }
 
   itemClickHandler(item: DirectoryItem) {
