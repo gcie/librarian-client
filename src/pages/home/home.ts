@@ -16,7 +16,7 @@ export class HomePage {
 
   constructor(
     public navCtrl: NavController,
-    public library: LibraryProvider,
+    // public library: LibraryProvider,
     public alertCtrl: AlertController,
     public file: File,
     public ftp: FTP
@@ -24,8 +24,8 @@ export class HomePage {
 
   ionViewDidLoad() {
     // this.loadDirectory();
-    console.log('### externalRootDir:', this.file.externalRootDirectory);
-    this.library.upload('filetree.json', 'filetree.json');
+    // console.log('### externalRootDir:', this.file.externalRootDirectory);
+    // this.library.upload('filetree.json', 'filetree.json');
 
     /* this.library.readDeep().then((tree) => {
       this.file.writeFile(this.file.externalRootDirectory, 'filetree.json', JSON.stringify(tree), { replace: true }).then(() => {
@@ -42,7 +42,7 @@ export class HomePage {
     }); */
   }
 
-  itemClickHandler(item: DirectoryItem) {
+ /*  itemClickHandler(item: DirectoryItem) {
     if (item.type === 1) {
       this.enterFolder(item);
     }
@@ -64,6 +64,6 @@ export class HomePage {
       .then((directory) => {
         this.currentDir = directory;
       })
-  }
+  } */
 
 }

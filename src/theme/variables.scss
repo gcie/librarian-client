@@ -35,10 +35,12 @@ $app-direction: ltr;
 
 $colors: (
   primary:    #795548,
-  secondary:  #32db64,
+  secondary:  #ff9800,
   danger:     #f53d3d,
   light:      #a98274,
-  dark:       #4b2c20
+  dark:       #4b2c20,
+  s-light:    #ffc947,
+  s-dark:     #c66900
 );
 
 
@@ -53,7 +55,8 @@ $colors: (
 // --------------------------------------------------
 // Material Design only Sass variables can go here
 
-
+$text-input-md-highlight-color: #ff9800;
+$text-input-md-highlight-color-valid: #c66900;
 
 
 // App Windows Variables

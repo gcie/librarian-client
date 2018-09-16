@@ -1,0 +1,58 @@
+<ion-header>
+
+  <ion-navbar color="primary">
+    <ion-title>Set up</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  
+    <ion-row>
+      <ion-col col-9>
+        <ion-item>
+          <ion-label floating>Hostname</ion-label>
+          <ion-input [(ngModel)]="creds.hostname" type="text"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col col-3>
+        <ion-item>
+          <ion-label floating>Port</ion-label>
+          <ion-input [(ngModel)]="creds.port" type="number"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label floating>Username</ion-label>
+          <ion-input [(ngModel)]="creds.username" type="text"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label floating>Password</ion-label>
+          <ion-input [(ngModel)]="creds.password" type="password"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label>Remember credentials</ion-label>
+          <ion-checkbox [(ngModel)]="creds.remember"></ion-checkbox>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-label color="danger">{{error}}</ion-label>
+
+    <button ion-button color="primary" full (click)="logIn()">Save</button>
+  
+  
+  </ion-content>
+  

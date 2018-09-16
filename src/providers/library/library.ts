@@ -65,11 +65,7 @@ export class LibraryProvider {
         .then(() => this.ftp.ls(dir))
         .then((directory) => {
           console.log(directory);
-          let res: DirectoryItem[] = [];
-          directory.forEach(item => {
-            res.push(item);
-          });
-          resolve(res);
+          resolve(directory);
         })
         .catch(reject);
     }); 
