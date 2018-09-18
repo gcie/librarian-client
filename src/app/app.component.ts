@@ -2,10 +2,9 @@ import { Component, ViewChild } from '@angular/core';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { Nav, Platform } from 'ionic-angular';
-import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
-import { MusicPage } from '../pages/music/music';
 import { SetupPage } from '../pages/setup/setup';
+import { FileBrowserPage } from './../pages/file-browser/file-browser';
+import { LibraryApi } from './../providers/library-api/library-api';
 
 
 @Component({
@@ -14,22 +13,13 @@ import { SetupPage } from '../pages/setup/setup';
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = HomePage;
-
-  pages: Array<{title: string, icon: string, component: any}>;
-
   constructor(
     public platform: Platform, 
     public statusBar: StatusBar,
-    public splashScreen: SplashScreen
+    public splashScreen: SplashScreen,
+    public libraryApi: LibraryApi
   ) {
     this.initializeApp();
-    // used for an example of ngFor and navigation
-    this.pages = [
-      { title: 'Music', icon: 'musical-note', component: MusicPage },
-      { title: 'Setup', icon: 'cog', component: SetupPage}
-    ];
-
   }
 
   initializeApp() {
@@ -38,12 +28,20 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+
+      this.checkCredentials();
     });
   }
   
-  openPage(page) {
-    // Reset the content nav to have just this page
-    // we wouldn't want the back button to show in this scenario
-    this.nav.setRoot(page.component);
+  async checkCredentials() {
+    const creds = await this.libraryApi.getCredentials();
+    const res = await this.libraryApi.login(creds);
+    if(res) {
+      console.log('### login on startup error:', res);
+      this.nav.setRoot(SetupPage);
+    } else {
+      console.log('### login on startup successful');
+      this.nav.setRoot(FileBrowserPage);
+    }
   }
 }

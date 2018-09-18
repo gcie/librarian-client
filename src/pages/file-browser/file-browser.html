@@ -1,0 +1,16 @@
+<ion-header>
+
+  <ion-navbar color="primary">
+    <ion-title>FileBrowser</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list>
+    <ion-item *ngFor="let item of directory">
+      {{item.name}}
+    </ion-item>
+  </ion-list>
+</ion-content>

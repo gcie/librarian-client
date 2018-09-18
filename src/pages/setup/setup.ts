@@ -1,5 +1,6 @@
+import { FileBrowserPage } from './../file-browser/file-browser';
 import { Component } from '@angular/core';
-import { AlertController, IonicPage, LoadingController } from 'ionic-angular';
+import { AlertController, IonicPage, LoadingController, NavController } from 'ionic-angular';
 import { Credentials } from '../../models/credentials';
 import { LibraryApi } from '../../providers/library-api/library-api';
 
@@ -11,13 +12,14 @@ import { LibraryApi } from '../../providers/library-api/library-api';
 })
 export class SetupPage {
 
-  private creds = new Credentials();
-  private error = '';
+  public creds = new Credentials();
+  public error = '';
 
   constructor(
     private libraryApi: LibraryApi,
     private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private navCtrl: NavController
   ) { }
 
   ionViewDidLoad() {
@@ -38,12 +40,15 @@ export class SetupPage {
       console.log('### unsetting credentials:', new Credentials());
       this.libraryApi.setCredentials(new Credentials());
     }
-    const res = await this.libraryApi.validateCredentials(this.creds);
+    const res = await this.libraryApi.login(this.creds);
     console.log('### logging result:', res);
     if (res) {
+      console.log('### login error!');
       this.error = 'Ivalid credentials!';
     } else {
+      console.log('### login successful');
       this.error = '';
+      this.navCtrl.setRoot(FileBrowserPage);
     }
     loader.dismiss();
   }

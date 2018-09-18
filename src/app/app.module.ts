@@ -6,21 +6,17 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { IonicStorageModule } from '@ionic/storage';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
-import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
-import { MusicPage } from '../pages/music/music';
 import { SetupPage } from '../pages/setup/setup';
 import { LibraryApi } from '../providers/library-api/library-api';
 import { Log } from '../providers/log/log';
 import { Utils } from '../providers/utils/utils';
+import { FileBrowserPage } from './../pages/file-browser/file-browser';
 import { MyApp } from './app.component';
 
 @NgModule({
   declarations: [
     MyApp,
-    HomePage,
-    ListPage,
-    MusicPage,
+    FileBrowserPage,
     SetupPage
   ],
   imports: [
@@ -31,9 +27,7 @@ import { MyApp } from './app.component';
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage,
-    ListPage,
-    MusicPage,
+    FileBrowserPage,
     SetupPage
   ],
   providers: [
