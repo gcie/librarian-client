@@ -1,3 +1,4 @@
+import { DirectoryProvider } from './../providers/directory/directory';
 import { Component, ViewChild } from '@angular/core';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
@@ -17,7 +18,8 @@ export class MyApp {
     public platform: Platform, 
     public statusBar: StatusBar,
     public splashScreen: SplashScreen,
-    public libraryApi: LibraryApi
+    public libraryApi: LibraryApi,
+    public directoryProvider: DirectoryProvider
   ) {
     this.initializeApp();
   }
@@ -33,6 +35,10 @@ export class MyApp {
     });
   }
   
+  save() {
+    this.directoryProvider.save();
+  }
+
   async checkCredentials() {
     const creds = await this.libraryApi.getCredentials();
     const res = await this.libraryApi.login(creds);

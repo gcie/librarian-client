@@ -1,8 +1,9 @@
-import { LibraryApi } from './../../providers/library-api/library-api';
-import { DirectoryItem } from './../../models/directoryItem';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { DirectoryProvider } from '../../providers/directory/directory';
+import { Directory } from '../../models/directory';
+import { DirectoryProvider } from './../../providers/directory/directory';
+import { LibraryApi } from './../../providers/library-api/library-api';
+import { SynchronizationState } from '../../models/synchronizedStateEnum';
 
 
 @IonicPage()
@@ -13,33 +14,30 @@ import { DirectoryProvider } from '../../providers/directory/directory';
 export class FileBrowserPage {
 
   public path: string = '';
-  public dir = [];
+  public dir = new Directory();
 
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
     public libraryApi: LibraryApi,
-    public directory: DirectoryProvider
+    public directoryProvider: DirectoryProvider
   ) { }
 
   ionViewDidLoad() {
+    this.path = this.navParams.get('path') || '';
     this.loadDirectory();
   }
 
-  loadDirectory() {
-    this.dir = [];
-    this.directory.read(this.path)
-      .then(dir => {
-        console.log(dir);
-        for (var k in dir.content) {
-          this.dir.push(dir.content[k]);
-        }
-      });
+  async loadDirectory() {
+    this.dir = await this.directoryProvider.readPath(this.path);
   }
 
   enter(folder) {
-    this.path = `${this.path}/${folder}`;
-    this.loadDirectory();
+    this.navCtrl.push(FileBrowserPage, { 'path': `${this.path}/${folder}`});
+  }
+
+  back() {
+    this.path.replace(/\/[^\/]*$/, '');
   }
 
 }

@@ -7,9 +7,9 @@
 
   <ion-content>
     <ion-list>
-      <ion-item menuClose *ngFor="let p of pages" (click)="openPage(p)">
-        <ion-icon [name]="p.icon" item-start></ion-icon>
-        {{p.title}}
+      <ion-item>
+        <ion-icon name="person" (click)="save()" item-start></ion-icon>
+        Save
       </ion-item>
       <ion-item>
         <ion-icon name="logout" item-start></ion-icon>
