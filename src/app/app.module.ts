@@ -12,6 +12,7 @@ import { Log } from '../providers/log/log';
 import { Utils } from '../providers/utils/utils';
 import { FileBrowserPage } from './../pages/file-browser/file-browser';
 import { MyApp } from './app.component';
+import { DirectoryProvider } from '../providers/directory/directory';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { MyApp } from './app.component';
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     { provide: LibraryApi, useClass: LibraryApi },
     Utils,
-    Log
+    Log,
+    DirectoryProvider
   ]
 })
 export class AppModule {}

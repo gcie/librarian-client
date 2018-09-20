@@ -2,6 +2,7 @@ import { LibraryApi } from './../../providers/library-api/library-api';
 import { DirectoryItem } from './../../models/directoryItem';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { DirectoryProvider } from '../../providers/directory/directory';
 
 
 @IonicPage()
@@ -11,17 +12,34 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class FileBrowserPage {
 
-  public directory: DirectoryItem[] = [];
+  public path: string = '';
+  public dir = [];
 
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
-    public libraryApi: LibraryApi
+    public libraryApi: LibraryApi,
+    public directory: DirectoryProvider
   ) { }
 
   ionViewDidLoad() {
-    // console.log('### Hello from FileBrowser');
-    this.directory = this.libraryApi.readDirectory('');
+    this.loadDirectory();
+  }
+
+  loadDirectory() {
+    this.dir = [];
+    this.directory.read(this.path)
+      .then(dir => {
+        console.log(dir);
+        for (var k in dir.content) {
+          this.dir.push(dir.content[k]);
+        }
+      });
+  }
+
+  enter(folder) {
+    this.path = `${this.path}/${folder}`;
+    this.loadDirectory();
   }
 
 }
