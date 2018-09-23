@@ -6,7 +6,7 @@ export class Directory implements Folder {
     name: string;
     size: number;
     modifiedDate: string;
-    synchronized: SynchronizationState;
+    synchronizationStatus: SynchronizationState;
 
     folders: Folder[];
     files: File[];
@@ -15,7 +15,7 @@ export class Directory implements Folder {
         this.name = '';
         this.size = -1;
         this.modifiedDate = '';
-        this.synchronized = SynchronizationState.None;
+        this.synchronizationStatus = SynchronizationState.None;
 
         this.folders = [];
         this.files = [];

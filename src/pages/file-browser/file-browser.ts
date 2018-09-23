@@ -1,3 +1,4 @@
+import { Utils } from './../../providers/utils/utils';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Directory } from '../../models/directory';
@@ -13,6 +14,7 @@ import { SynchronizationState } from '../../models/synchronizedStateEnum';
 })
 export class FileBrowserPage {
 
+  public title = 'Main directory';
   public path: string = '';
   public dir = new Directory();
 
@@ -20,11 +22,13 @@ export class FileBrowserPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public libraryApi: LibraryApi,
-    public directoryProvider: DirectoryProvider
+    public directoryProvider: DirectoryProvider,
+    public util: Utils
   ) { }
 
   ionViewDidLoad() {
     this.path = this.navParams.get('path') || '';
+    this.title = this.navParams.get('title') || this.title;
     this.loadDirectory();
   }
 
@@ -33,7 +37,7 @@ export class FileBrowserPage {
   }
 
   enter(folder) {
-    this.navCtrl.push(FileBrowserPage, { 'path': `${this.path}/${folder}`});
+    this.navCtrl.push(FileBrowserPage, { 'path': `${this.path}/${folder}`, 'title': folder });
   }
 
   back() {

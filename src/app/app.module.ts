@@ -11,8 +11,12 @@ import { LibraryApi } from '../providers/library-api/library-api';
 import { Log } from '../providers/log/log';
 import { Utils } from '../providers/utils/utils';
 import { FileBrowserPage } from './../pages/file-browser/file-browser';
+import { DirectoryProvider } from './../providers/directory/directory';
+import { MockDirectoryProvider } from './../providers/mock-directory/mock-directory';
 import { MyApp } from './app.component';
-import { DirectoryProvider } from '../providers/directory/directory';
+import { MockLibraryApi } from '../providers/mock-library-api/mock-library-api';
+
+const MOCK = false;
 
 @NgModule({
   declarations: [
@@ -37,10 +41,10 @@ import { DirectoryProvider } from '../providers/directory/directory';
     FTP,
     File,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
-    { provide: LibraryApi, useClass: LibraryApi },
+    { provide: LibraryApi, useClass: MOCK ? MockLibraryApi : LibraryApi},
+    { provide: DirectoryProvider, useClass: MOCK ? MockDirectoryProvider : DirectoryProvider },
     Utils,
-    Log,
-    DirectoryProvider
+    Log
   ]
 })
 export class AppModule {}

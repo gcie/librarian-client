@@ -4,5 +4,5 @@ export interface Folder {
     name: string;
     size: number;
     modifiedDate: string;
-    synchronized: SynchronizationState;
+    synchronizationStatus: SynchronizationState;
 }
