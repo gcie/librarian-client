@@ -1,8 +1,8 @@
-import { FileBrowserPage } from './../file-browser/file-browser';
 import { Component } from '@angular/core';
-import { AlertController, IonicPage, LoadingController, NavController } from 'ionic-angular';
+import { IonicPage, LoadingController, NavController } from 'ionic-angular';
 import { Credentials } from '../../models/credentials';
 import { LibraryApi } from '../../providers/library-api/library-api';
+import { FileBrowserPage } from './../file-browser/file-browser';
 
 
 @IonicPage()
@@ -17,7 +17,6 @@ export class SetupPage {
 
   constructor(
     private libraryApi: LibraryApi,
-    private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
     private navCtrl: NavController
   ) { }

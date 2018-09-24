@@ -1,10 +1,11 @@
-import { Utils } from './../../providers/utils/utils';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Directory } from '../../models/directory';
 import { DirectoryProvider } from './../../providers/directory/directory';
 import { LibraryApi } from './../../providers/library-api/library-api';
-import { SynchronizationState } from '../../models/synchronizedStateEnum';
+import { Utils } from './../../providers/utils/utils';
+import { File } from '../../models/file';
+import { Folder } from '../../models/folder';
 
 
 @IonicPage()
@@ -42,6 +43,14 @@ export class FileBrowserPage {
 
   back() {
     this.path.replace(/\/[^\/]*$/, '');
+  }
+
+  syncFile(file: File) {
+    this.directoryProvider.setSynchronizeFile(this.path, file.name);
+  }
+
+  syncFolder(folder: Folder) {
+    this.directoryProvider.setSynchronizeFolder(this.path, folder.name);
   }
 
 }

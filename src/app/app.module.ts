@@ -16,7 +16,7 @@ import { MockDirectoryProvider } from './../providers/mock-directory/mock-direct
 import { MyApp } from './app.component';
 import { MockLibraryApi } from '../providers/mock-library-api/mock-library-api';
 
-const MOCK = false;
+const MOCK = true;
 
 @NgModule({
   declarations: [

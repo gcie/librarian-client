@@ -12,28 +12,51 @@ import { SynchronizationState } from '../../models/synchronizedStateEnum';
 export class DirectoryProvider {
 
   root: DirectoryDeep;
+  syncQueue: string[];
 
   constructor(
     public ftp: FTP,
     public file: File,
     public storage: Storage
   ) {
+    this.syncQueue = [];
     this.root = new DirectoryDeep({name: '', size: -1, type: 1, modifiedDate: ''});
+  }
+
+  async updateSyncQueue(dir = this.root, path = '') {
+    this.syncQueue = [];
+    for (let file of dir.files) {
+      if (file.synchronizationStatus == SynchronizationState.Waiting) {
+        this.syncQueue.push(`${path}/${file.name}`);
+      }
+    }
+
+    for (let folder of dir.folders) {
+      if (folder.synchronizationStatus == SynchronizationState.Waiting || folder.synchronizationStatus == SynchronizationState.Progress) {
+        this.updateSyncQueue(dir.cd(folder.name), `${path}/${folder.name}`);
+      }
+    }
   }
 
   async setSynchronizeFolder(path: string, folderName: string) {
     const dir = await this.buildDeep(`${path}/${folderName}`);
-    const subDir = dir.cd(folderName);
-    if( folder.synchronizationStatus != SynchronizationState.Full ) {
-      folder.synchronizationStatus = SynchronizationState.Waiting;
+    if (dir.synchronizationStatus !== SynchronizationState.Full) {
+      dir.synchronizationStatus = SynchronizationState.Waiting;
+      for (let folder of dir.folders) {
+        this.setSynchronizeFolder(`${path}/${folderName}`, folder.name);
+      }
+      for (let file of dir.files) {
+        this.setSynchronizeFile(`${path}/${folderName}`, file.name);
+      }
     }
-    for (let fld of folder.folders)
-
   }
 
   async setSynchronizeFile(path: string, file: string) {
     const dir = this.readPathNoCheck(path);
     dir.file(file).synchronizationStatus = SynchronizationState.Waiting;
+    if (!this.syncQueue.find(item => item == `${path}/${file}`)) {
+      this.syncQueue.push(`${path}/${file}`);
+    }
   }
 
   updateSynchronizationState(path: string) {

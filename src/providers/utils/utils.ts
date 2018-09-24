@@ -1,7 +1,6 @@
-import { SynchronizationState } from './../../models/synchronizedStateEnum';
 import { Injectable } from '@angular/core';
 import { DirectoryItem } from '../../models/directoryItem';
-import { Select } from 'ionic-angular';
+import { SynchronizationState } from './../../models/synchronizedStateEnum';
 
 @Injectable()
 export class Utils {
@@ -30,6 +29,7 @@ export class Utils {
         return 'Downloaded';
       }
     }
+    return 'Unknown state';
   }
 
 }
