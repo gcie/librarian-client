@@ -1,12 +1,12 @@
 import { File } from "./file";
 import { Folder } from "./folder";
-import { SynchronizationState } from './synchronizedStateEnum';
+import { Sync } from './synchronizedStateEnum';
 
 export class Directory implements Folder {
     name: string;
     size: number;
     modifiedDate: string;
-    synchronizationStatus: SynchronizationState;
+    synchronizationStatus: Sync;
 
     folders: Folder[];
     files: File[];
@@ -15,7 +15,7 @@ export class Directory implements Folder {
         this.name = '';
         this.size = -1;
         this.modifiedDate = '';
-        this.synchronizationStatus = SynchronizationState.None;
+        this.synchronizationStatus = Sync.No;
 
         this.folders = [];
         this.files = [];

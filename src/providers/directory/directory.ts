@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
+import { File } from '@ionic-native/file';
 import { FTP } from '@ionic-native/ftp';
 import { Storage } from '@ionic/storage';
 import { Directory } from '../../models/directory';
 import { DirectoryItem } from '../../models/directoryItem';
+import { Sync } from '../../models/synchronizedStateEnum';
+import { Util } from '../util/util';
 import { DirectoryDeep } from './../../models/directoryDeep';
-import { File } from '@ionic-native/file';
-import { SynchronizationState } from '../../models/synchronizedStateEnum';
 
 
 @Injectable()
@@ -13,78 +14,117 @@ export class DirectoryProvider {
 
   root: DirectoryDeep;
   syncQueue: string[];
+  unsyncQueue: string[];
 
   constructor(
     public ftp: FTP,
     public file: File,
-    public storage: Storage
+    public storage: Storage,
+    public util: Util
   ) {
     this.syncQueue = [];
+    this.unsyncQueue = [];
     this.root = new DirectoryDeep({name: '', size: -1, type: 1, modifiedDate: ''});
   }
 
+  /**
+   * Add all files whichc are marked for synchronization to syncQueue and unsyncQueue.
+   * Do not use if queues are not empty.
+   * @param dir root directory to search for waiting files
+   * @param path path of dir
+   */
   async updateSyncQueue(dir = this.root, path = '') {
-    this.syncQueue = [];
     for (let file of dir.files) {
-      if (file.synchronizationStatus == SynchronizationState.Waiting) {
+      if (file.synchronizationStatus == Sync.WaitingForDownload) {
         this.syncQueue.push(`${path}/${file.name}`);
+      } else if (file.synchronizationStatus == Sync.WaitingForRemoval) {
+        this.unsyncQueue.push(`${path}/${file.name}`);
       }
     }
 
     for (let folder of dir.folders) {
-      if (folder.synchronizationStatus == SynchronizationState.Waiting || folder.synchronizationStatus == SynchronizationState.Progress) {
+      if (!this.util.syncStatusDone(folder.synchronizationStatus)) {
         this.updateSyncQueue(dir.cd(folder.name), `${path}/${folder.name}`);
       }
     }
   }
 
-  async setSynchronizeFolder(path: string, folderName: string) {
+  async markFolderToDownload(path: string, folderName: string) {
     const dir = await this.buildDeep(`${path}/${folderName}`);
-    if (dir.synchronizationStatus !== SynchronizationState.Full) {
-      dir.synchronizationStatus = SynchronizationState.Waiting;
+    if (dir.synchronizationStatus !== Sync.Yes) {
+      dir.synchronizationStatus = Sync.WaitingForDownload;
       for (let folder of dir.folders) {
-        this.setSynchronizeFolder(`${path}/${folderName}`, folder.name);
+        await this.markFolderToDownload(`${path}/${folderName}`, folder.name);
       }
       for (let file of dir.files) {
-        this.setSynchronizeFile(`${path}/${folderName}`, file.name);
+        await this.markFileToDownload(`${path}/${folderName}`, file.name);
       }
     }
   }
 
-  async setSynchronizeFile(path: string, file: string) {
+  async markFileToDownload(path: string, filename: string) {
     const dir = this.readPathNoCheck(path);
-    dir.file(file).synchronizationStatus = SynchronizationState.Waiting;
-    if (!this.syncQueue.find(item => item == `${path}/${file}`)) {
-      this.syncQueue.push(`${path}/${file}`);
+    if (dir.file(filename).synchronizationStatus !== Sync.Yes) {
+      dir.file(filename).synchronizationStatus = Sync.WaitingForDownload;
+      this.unsyncQueue.filter(item => item !== `${path}/${filename}`);
+      if (!this.syncQueue.find(item => item == `${path}/${filename}`)) {
+        this.syncQueue.push(`${path}/${filename}`);
+      }
     }
   }
 
-  updateSynchronizationState(path: string) {
+  async markFolderToRemove(path: string, folderName: string) {
+    const dir = await this.buildDeep(`${path}/${folderName}`);
+    if (dir.synchronizationStatus !== Sync.No) {
+      dir.synchronizationStatus = Sync.WaitingForRemoval;
+      for (let folder of dir.folders) {
+        await this.markFolderToRemove(`${path}/${folderName}`, folder.name);
+      }
+      for (let file of dir.files) {
+        await this.markFileToRemove(`${path}/${folderName}`, file.name);
+      }
+    }
+  }
+
+  async markFileToRemove(path: string, filename: string) {
+    const dir = this.readPathNoCheck(path);
+    if (dir.file(filename).synchronizationStatus !== Sync.No) {
+      dir.file(filename).synchronizationStatus = Sync.WaitingForRemoval;
+      this.syncQueue.filter(item => item !== `${path}/${filename}`);
+      if (!this.unsyncQueue.find(item => item == `${path}/${filename}`)) {
+        this.unsyncQueue.push(`${path}/${filename}`);
+      }
+    }
+  }
+
+  /* updateSynchronizationState(path: string) { // TODO: update considering sync states update
     const dir = this.readPathNoCheck(path);
     let fullSync = true;
     let noSync = true;
-    let waiting = false;
-    let progress = false;
+    let waitingForRemoval = false;
+    let waitingForDownload = false;
+    let removing = false;
+    let downloading = false;
     for (let folder of dir.folders) {
       switch(folder.synchronizationStatus) {
-        case SynchronizationState.None: {
+        case Sync.No: {
           fullSync = false;
           break;
         }
-        case SynchronizationState.Partial: {
+        case Sync.Partial: {
           fullSync = false;
           noSync = false;
           break;
         }
-        case SynchronizationState.Full: {
+        case Sync.Yes: {
           noSync = false;
           break;
         }
-        case SynchronizationState.Waiting: {
+        case Sync.WaitingForDownload: {
           waiting = true;
           break;
         }
-        case SynchronizationState.Progress: {
+        case Sync.Downloading: {
           progress = true;
           break;
         }
@@ -92,41 +132,41 @@ export class DirectoryProvider {
     }
     for (let file of dir.files) {
       switch(file.synchronizationStatus) {
-        case SynchronizationState.None: {
+        case Sync.No: {
           fullSync = false;
           break;
         }
-        case SynchronizationState.Partial: {
+        case Sync.Partial: {
           fullSync = false;
           noSync = false;
           break;
         }
-        case SynchronizationState.Full: {
+        case Sync.Yes: {
           noSync = false;
           break;
         }
-        case SynchronizationState.Waiting: {
+        case Sync.WaitingForDownload: {
           waiting = true;
           break;
         }
-        case SynchronizationState.Progress: {
+        case Sync.Downloading: {
           progress = true;
           break;
         }
       }
     }
     if (progress) {
-      dir.synchronizationStatus = SynchronizationState.Progress;
+      dir.synchronizationStatus = Sync.Downloading;
     } else if (waiting) {
-      dir.synchronizationStatus = SynchronizationState.Waiting;
+      dir.synchronizationStatus = Sync.WaitingForDownload;
     } else if (fullSync) {
-      dir.synchronizationStatus = SynchronizationState.Full;
+      dir.synchronizationStatus = Sync.Yes;
     } else if (noSync) {
-      dir.synchronizationStatus = SynchronizationState.None;
+      dir.synchronizationStatus = Sync.No;
     } else {
-      dir.synchronizationStatus = SynchronizationState.Partial;
+      dir.synchronizationStatus = Sync.Partial;
     }
-  }
+  } */
 
 
   async load() {

@@ -2,13 +2,13 @@ import { Directory } from './directory';
 import { DirectoryItem } from "./directoryItem";
 import { File } from "./file";
 import { Folder } from "./folder";
-import { SynchronizationState } from './synchronizedStateEnum';
+import { Sync } from './synchronizedStateEnum';
 
 export class DirectoryDeep extends Directory {
     name: string;
     size: number;
     modifiedDate: string;
-    synchronizationStatus: SynchronizationState;
+    synchronizationStatus: Sync;
 
     complete: boolean;
 
@@ -29,7 +29,7 @@ export class DirectoryDeep extends Directory {
                         break;
                     }
                     case 0: {
-                        this.files.push(Object.assign(item, { synchronizationStatus: SynchronizationState.None }));
+                        this.files.push(Object.assign(item, { synchronizationStatus: Sync.No }));
                         break;
                     }
                 }
@@ -47,7 +47,7 @@ export class DirectoryDeep extends Directory {
             break;
         }
         case 0: {
-            this.files.push(Object.assign(item, { synchronizationStatus: SynchronizationState.None }));
+            this.files.push(Object.assign(item, { synchronizationStatus: Sync.No }));
             break;
         }
         }

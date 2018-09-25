@@ -1,8 +1,8 @@
-import { SynchronizationState } from './synchronizedStateEnum';
+import { Sync } from './synchronizedStateEnum';
 
 export interface Folder {
     name: string;
     size: number;
     modifiedDate: string;
-    synchronizationStatus: SynchronizationState;
+    synchronizationStatus: Sync;
 }

@@ -1,7 +1,10 @@
-export enum SynchronizationState {
-    None,
-    Partial,
-    Waiting,
-    Progress,
-    Full
+export enum Sync {
+    No,
+    Removing,
+    WaitingForRemoval,
+    Partial, // folder only
+    Waiting, // folder only
+    WaitingForDownload,
+    Downloading,
+    Yes
 }

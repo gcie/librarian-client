@@ -15,16 +15,22 @@
     <ion-item *ngIf="dir.folders.length">
       <p>Folders</p>
     </ion-item>
-    <ion-item-sliding *ngFor="let folder of dir.folders">
+    <ion-item-sliding #folderItem *ngFor="let folder of dir.folders">
       <ion-item (click)="enter(folder.name)">
-          <ion-icon large name="folder" item-start></ion-icon>
+          <ion-icon large name="folder" color="light" item-start></ion-icon>
           <h2>{{folder.name}}</h2>
           <p>{{util.syncStatusDesc(folder.synchronizationStatus)}}</p>
       </ion-item>
-      <ion-item-options side="right">
-        <button ion-button color="secondary">
-          <ion-icon name="sync" (click)="syncFolder(folder)"></ion-icon>
-          Sync
+      <ion-item-options side="right" (ionSwipe)="syncFolder(folder)">
+        <button ion-button expandable class="expand-hide" color="secondary">
+          <!-- <ion-icon name="sync" large class="expand-hide" (click)="syncFolder(folder)"></ion-icon>
+          Sync -->
+        </button>
+      </ion-item-options>
+      <ion-item-options side="left" (ionSwipe)="unsyncFolder(folder)">
+        <button ion-button color="danger">
+          <ion-icon name="sync" (click)="unsyncFolder(folder)"></ion-icon>
+          Remove
         </button>
       </ion-item-options>
     </ion-item-sliding>
@@ -33,11 +39,15 @@
     </ion-item>
     <ion-item-sliding *ngFor="let file of dir.files">
       <ion-item>
-        <ion-icon large name="document" item-start></ion-icon>
+        <ion-icon large name="document" color="secondary" item-start></ion-icon>
         <h2>{{file.name}}</h2>
         <p>{{util.syncStatusDesc(file.synchronizationStatus)}}</p>
       </ion-item>
       <ion-item-options>
+        <button ion-button color="danger">
+          <ion-icon name="sync" (click)="unsyncFile(file)"></ion-icon>
+          Remove
+        </button>
         <button ion-button color="secondary" (click)="syncFile(file)">
           <ion-icon name="sync"></ion-icon>
           Sync

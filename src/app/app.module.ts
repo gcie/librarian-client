@@ -9,12 +9,12 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { SetupPage } from '../pages/setup/setup';
 import { LibraryApi } from '../providers/library-api/library-api';
 import { Log } from '../providers/log/log';
-import { Utils } from '../providers/utils/utils';
+import { MockLibraryApi } from '../providers/mock-library-api/mock-library-api';
+import { Util } from '../providers/util/util';
 import { FileBrowserPage } from './../pages/file-browser/file-browser';
 import { DirectoryProvider } from './../providers/directory/directory';
 import { MockDirectoryProvider } from './../providers/mock-directory/mock-directory';
 import { MyApp } from './app.component';
-import { MockLibraryApi } from '../providers/mock-library-api/mock-library-api';
 
 const MOCK = true;
 
@@ -43,7 +43,7 @@ const MOCK = true;
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     { provide: LibraryApi, useClass: MOCK ? MockLibraryApi : LibraryApi},
     { provide: DirectoryProvider, useClass: MOCK ? MockDirectoryProvider : DirectoryProvider },
-    Utils,
+    Util,
     Log
   ]
 })

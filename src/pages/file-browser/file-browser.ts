@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ViewChildren } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Directory } from '../../models/directory';
-import { DirectoryProvider } from './../../providers/directory/directory';
-import { LibraryApi } from './../../providers/library-api/library-api';
-import { Utils } from './../../providers/utils/utils';
 import { File } from '../../models/file';
 import { Folder } from '../../models/folder';
+import { Util } from '../../providers/util/util';
+import { DirectoryProvider } from './../../providers/directory/directory';
+import { LibraryApi } from './../../providers/library-api/library-api';
 
 
 @IonicPage()
@@ -19,18 +19,21 @@ export class FileBrowserPage {
   public path: string = '';
   public dir = new Directory();
 
+  @ViewChildren('folderItem') folderItems;
+
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
     public libraryApi: LibraryApi,
     public directoryProvider: DirectoryProvider,
-    public util: Utils
+    public util: Util
   ) { }
 
   ionViewDidLoad() {
     this.path = this.navParams.get('path') || '';
     this.title = this.navParams.get('title') || this.title;
     this.loadDirectory();
+    console.log(this.folderItems);
   }
 
   async loadDirectory() {
@@ -46,11 +49,19 @@ export class FileBrowserPage {
   }
 
   syncFile(file: File) {
-    this.directoryProvider.setSynchronizeFile(this.path, file.name);
+    this.directoryProvider.markFileToDownload(this.path, file.name).then(() => this.loadDirectory());
   }
 
   syncFolder(folder: Folder) {
-    this.directoryProvider.setSynchronizeFolder(this.path, folder.name);
+    this.directoryProvider.markFolderToDownload(this.path, folder.name).then(() => this.loadDirectory());
+  }
+
+  unsyncFile(file: File) {
+    this.directoryProvider.markFileToRemove(this.path, file.name).then(() => this.loadDirectory());
+  }
+
+  unsyncFolder(folder: Folder) {
+    this.directoryProvider.markFolderToRemove(this.path, folder.name).then(() => this.loadDirectory());
   }
 
 }
