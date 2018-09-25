@@ -50,4 +50,8 @@ export class MyApp {
       this.nav.setRoot(FileBrowserPage);
     }
   }
+
+  async synchronize() {
+    this.libraryApi.handleDownload();
+  }
 }

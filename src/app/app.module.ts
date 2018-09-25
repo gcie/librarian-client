@@ -16,7 +16,7 @@ import { DirectoryProvider } from './../providers/directory/directory';
 import { MockDirectoryProvider } from './../providers/mock-directory/mock-directory';
 import { MyApp } from './app.component';
 
-const MOCK = true;
+const MOCK = false;
 
 @NgModule({
   declarations: [

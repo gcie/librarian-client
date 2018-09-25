@@ -12,47 +12,62 @@
 
 <ion-content padding>
   <ion-list>
+
     <ion-item *ngIf="dir.folders.length">
       <p>Folders</p>
     </ion-item>
-    <ion-item-sliding #folderItem *ngFor="let folder of dir.folders">
+
+    <ion-item-sliding #item *ngFor="let folder of dir.folders">
+
       <ion-item (click)="enter(folder.name)">
           <ion-icon large name="folder" color="light" item-start></ion-icon>
           <h2>{{folder.name}}</h2>
           <p>{{util.syncStatusDesc(folder.synchronizationStatus)}}</p>
       </ion-item>
-      <ion-item-options side="right" (ionSwipe)="syncFolder(folder)">
+
+      <ion-item-options side="right" (ionSwipe)="syncFolder(folder, item)">
         <button ion-button expandable class="expand-hide" color="secondary">
-          <!-- <ion-icon name="sync" large class="expand-hide" (click)="syncFolder(folder)"></ion-icon>
-          Sync -->
+          <ion-icon name="sync" class="expand-hide" (click)="syncFolder(folder, item)"></ion-icon>
+          <div>Sync</div>
         </button>
       </ion-item-options>
-      <ion-item-options side="left" (ionSwipe)="unsyncFolder(folder)">
-        <button ion-button color="danger">
-          <ion-icon name="sync" (click)="unsyncFolder(folder)"></ion-icon>
-          Remove
+
+      <ion-item-options side="left" (ionSwipe)="unsyncFolder(folder, item)">
+        <button ion-button expandable class="expand-hide" color="danger">
+          <ion-icon name="trash" class="expand-hide" (click)="unsyncFolder(folder, item)"></ion-icon>
+          <div>Remove</div>
         </button>
       </ion-item-options>
+      
     </ion-item-sliding>
+
     <ion-item *ngIf="dir.files.length">
       <p>Files</p>
     </ion-item>
-    <ion-item-sliding *ngFor="let file of dir.files">
+
+    <ion-item-sliding #item *ngFor="let file of dir.files">
+
       <ion-item>
         <ion-icon large name="document" color="secondary" item-start></ion-icon>
         <h2>{{file.name}}</h2>
         <p>{{util.syncStatusDesc(file.synchronizationStatus)}}</p>
       </ion-item>
-      <ion-item-options>
-        <button ion-button color="danger">
-          <ion-icon name="sync" (click)="unsyncFile(file)"></ion-icon>
-          Remove
-        </button>
-        <button ion-button color="secondary" (click)="syncFile(file)">
-          <ion-icon name="sync"></ion-icon>
-          Sync
+
+      <ion-item-options side="right" (ionSwipe)="unsyncFile(file, item)">
+        <button ion-button class="expand-hide" color="danger">
+          <ion-icon name="trash" class="expand-hide" (click)="unsyncFile(file, item)"></ion-icon>
+          <div>Remove</div>
         </button>
       </ion-item-options>
+
+      <ion-item-options side="left" (ionSwipe)="syncFile(file, item)">
+        <button ion-button class="expand-hide" color="secondary" (click)="syncFile(file, item)">
+          <ion-icon name="sync" class="expand-hide"></ion-icon>
+          <div>Sync</div>
+        </button>
+      </ion-item-options>
+
     </ion-item-sliding>
+
   </ion-list>
 </ion-content>

@@ -48,20 +48,24 @@ export class FileBrowserPage {
     this.path.replace(/\/[^\/]*$/, '');
   }
 
-  syncFile(file: File) {
+  syncFile(file: File, item) {
     this.directoryProvider.markFileToDownload(this.path, file.name).then(() => this.loadDirectory());
+    if (item) setTimeout(() => item.close());
   }
 
-  syncFolder(folder: Folder) {
+  syncFolder(folder: Folder, item) {
     this.directoryProvider.markFolderToDownload(this.path, folder.name).then(() => this.loadDirectory());
+    if (item) setTimeout(() => item.close());
   }
 
-  unsyncFile(file: File) {
+  unsyncFile(file: File, item) {
     this.directoryProvider.markFileToRemove(this.path, file.name).then(() => this.loadDirectory());
+    if (item) setTimeout(() => item.close());
   }
 
-  unsyncFolder(folder: Folder) {
+  unsyncFolder(folder: Folder, item) {
     this.directoryProvider.markFolderToRemove(this.path, folder.name).then(() => this.loadDirectory());
+    if (item) setTimeout(() => item.close());
   }
 
 }

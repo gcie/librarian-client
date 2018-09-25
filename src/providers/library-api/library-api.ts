@@ -1,19 +1,49 @@
+import { DirectoryProvider } from './../directory/directory';
 import { Injectable } from '@angular/core';
 import { File } from '@ionic-native/file';
 import { FTP } from '@ionic-native/ftp';
 import { Storage } from '@ionic/storage';
 import { Credentials } from '../../models/credentials';
-import { Directory } from '../../models/directory';
 
 @Injectable()
 export class LibraryApi {
 
   constructor(
-    private ftp: FTP,
-    private storage: Storage,
-    private file: File
+    public ftp: FTP,
+    public storage: Storage,
+    public file: File,
+    public directory: DirectoryProvider
   ) {
     // storage.set('credentials', { hostname: 'reinfarn.ddns.net', port: 8021, username: 'gucci', password: 'gucci123' });
+  }
+
+  async handleDownload() {
+    for (let downloadPath of this.directory.syncQueue) {
+      let path = downloadPath.slice(0, downloadPath.lastIndexOf('/'));
+      await this.createDirectory(path);
+      await this.download(downloadPath);
+    }
+  }
+
+  async download(file: string) {
+    return new Promise((resolve, reject) => {
+      this.ftp.download(`${this.file.externalRootDirectory}/Librarian${file}`, file)
+        .subscribe(status => {
+          if (status == 1) {
+            resolve();
+          }
+        })
+    });
+    
+  }
+
+  async createDirectory(path: string) {
+    try { await this.file.createDir(this.file.externalRootDirectory, 'Librarian', false); } catch (err) { }
+    let currentDir = `${this.file.externalRootDirectory}/Librarian`;
+    for (let folder of path.split('/').slice(1)) {
+      try { await this.file.createDir(currentDir, folder, false); } catch (err) { }
+      currentDir = `${currentDir}/${folder}`;
+    }
   }
 
   async setCredentials(c: Credentials) {
