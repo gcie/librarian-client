@@ -15,17 +15,21 @@ import { FileBrowserPage } from './../pages/file-browser/file-browser';
 import { DirectoryProvider } from './../providers/directory/directory';
 import { MockDirectoryProvider } from './../providers/mock-directory/mock-directory';
 import { MyApp } from './app.component';
+import { ComponentsModule } from '../components/components.module';
+import { ProgressViewPage } from '../pages/progress-view/progress-view';
 
-const MOCK = false;
+const MOCK = true;
 
 @NgModule({
   declarations: [
     MyApp,
     FileBrowserPage,
-    SetupPage
+    SetupPage,
+    ProgressViewPage
   ],
   imports: [
     BrowserModule,
+    ComponentsModule,
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot(),
   ],
@@ -33,7 +37,8 @@ const MOCK = false;
   entryComponents: [
     MyApp,
     FileBrowserPage,
-    SetupPage
+    SetupPage,
+    ProgressViewPage
   ],
   providers: [
     StatusBar,

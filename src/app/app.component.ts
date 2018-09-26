@@ -1,10 +1,10 @@
-import { DirectoryProvider } from './../providers/directory/directory';
 import { Component, ViewChild } from '@angular/core';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { Nav, Platform } from 'ionic-angular';
+import { ProgressViewPage } from '../pages/progress-view/progress-view';
 import { SetupPage } from '../pages/setup/setup';
-import { FileBrowserPage } from './../pages/file-browser/file-browser';
+import { DirectoryProvider } from './../providers/directory/directory';
 import { LibraryApi } from './../providers/library-api/library-api';
 
 
@@ -47,7 +47,7 @@ export class MyApp {
       this.nav.setRoot(SetupPage);
     } else {
       console.log('### login on startup successful');
-      this.nav.setRoot(FileBrowserPage);
+      this.nav.setRoot(SetupPage);
     }
   }
 

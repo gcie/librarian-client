@@ -28,7 +28,7 @@ export class DirectoryProvider {
   }
 
   /**
-   * Add all files whichc are marked for synchronization to syncQueue and unsyncQueue.
+   * Add all files which are marked for synchronization to syncQueue and unsyncQueue.
    * Do not use if queues are not empty.
    * @param dir root directory to search for waiting files
    * @param path path of dir
@@ -49,20 +49,59 @@ export class DirectoryProvider {
     }
   }
 
-  async markFolderToDownload(path: string, folderName: string) {
-    const dir = await this.buildDeep(`${path}/${folderName}`);
+  /**
+   * Mark folder and it's content as ready to download and add them
+   * to download queue. If folder is already downloaded it resolves 
+   * after building entire folder structure, so there may be delay 
+   * before actual mark change. It requires you to have built given path.
+   * 
+   * @param path path of base folder containing target folder
+   * @param foldername name of the folder to be downloaded
+   */
+  async markFolderAsWaitingForDownload(path: string, foldername: string) {
+    const dir = await this.buildDeep(`${path}/${foldername}`);
     if (dir.synchronizationStatus !== Sync.Yes) {
       dir.synchronizationStatus = Sync.WaitingForDownload;
       for (let folder of dir.folders) {
-        await this.markFolderToDownload(`${path}/${folderName}`, folder.name);
+        await this.markFolderAsWaitingForDownload(`${path}/${foldername}`, folder.name);
       }
       for (let file of dir.files) {
-        await this.markFileToDownload(`${path}/${folderName}`, file.name);
+        await this.markFileAsWaitingForDownload(`${path}/${foldername}`, file.name);
       }
     }
   }
 
-  async markFileToDownload(path: string, filename: string) {
+  /**
+   * Mark folder and it's content as ready to remove and add them to removal queue. 
+   * If folder is already removed it resolves after building entire 
+   * folder structure, so there may be delay before actual mark change.
+   * It requires you to have built given path.
+   * 
+   * @param path path of base folder containing target folder
+   * @param foldername name of the folder to be removed
+   */
+  async markFolderAsWaitingForRemoval(path: string, foldername: string) {
+    const dir = await this.buildDeep(`${path}/${foldername}`);
+    if (dir.synchronizationStatus !== Sync.No) {
+      dir.synchronizationStatus = Sync.WaitingForRemoval;
+      for (let folder of dir.folders) {
+        await this.markFolderAsWaitingForRemoval(`${path}/${foldername}`, folder.name);
+      }
+      for (let file of dir.files) {
+        await this.markFileAsWaitingForRemoval(`${path}/${foldername}`, file.name);
+      }
+    }
+  }
+
+  /**
+   * Mark file as ready to download and add it to download queue. 
+   * If file is already downloaded it resolves immediately. 
+   * It requires you to have built given path.
+   * 
+   * @param path path of base folder containing target file
+   * @param filename name of the file to be downloaded
+   */
+  markFileAsWaitingForDownload(path: string, filename: string) {
     const dir = this.readPathNoCheck(path);
     if (dir.file(filename).synchronizationStatus !== Sync.Yes) {
       dir.file(filename).synchronizationStatus = Sync.WaitingForDownload;
@@ -73,20 +112,15 @@ export class DirectoryProvider {
     }
   }
 
-  async markFolderToRemove(path: string, folderName: string) {
-    const dir = await this.buildDeep(`${path}/${folderName}`);
-    if (dir.synchronizationStatus !== Sync.No) {
-      dir.synchronizationStatus = Sync.WaitingForRemoval;
-      for (let folder of dir.folders) {
-        await this.markFolderToRemove(`${path}/${folderName}`, folder.name);
-      }
-      for (let file of dir.files) {
-        await this.markFileToRemove(`${path}/${folderName}`, file.name);
-      }
-    }
-  }
-
-  async markFileToRemove(path: string, filename: string) {
+  /**
+   * Mark file as ready to remove and add it to removal queue. 
+   * If file is already removed it resolves immediately. 
+   * It requires you to have built given path.
+   * 
+   * @param path path of base folder containing target file
+   * @param filename name of the file to be downloaded
+   */
+  markFileAsWaitingForRemoval(path: string, filename: string) {
     const dir = this.readPathNoCheck(path);
     if (dir.file(filename).synchronizationStatus !== Sync.No) {
       dir.file(filename).synchronizationStatus = Sync.WaitingForRemoval;
@@ -95,6 +129,67 @@ export class DirectoryProvider {
         this.unsyncQueue.push(`${path}/${filename}`);
       }
     }
+  }
+
+  /**
+   * Mark file as being downloaded. It requires you to have built 
+   * given path.
+   * 
+   * @param path path of base folder containing target file
+   * @param filename name of the file to be marked
+   */
+  markFileAsBeingDownloaded(path: string, filename: string) {
+    const dir = this.readPathNoCheck(path);
+    dir.file(filename).synchronizationStatus = Sync.Downloading;
+    this.updateSynchronizationStatusBackwards(path);
+  }
+
+  /**
+   * Mark file as being removed. It requires you to have built 
+   * given path.
+   * 
+   * @param path path of base folder containing target file
+   * @param filename name of the file to be marked
+   */
+  markFileAsBeingRemoved(path: string, filename: string) {
+    const dir = this.readPathNoCheck(path);
+    dir.file(filename).synchronizationStatus = Sync.Removing;
+    this.updateSynchronizationStatusBackwards(path);
+  }
+
+  /**
+   * Mark file as removed. It requires you to have built 
+   * given path.
+   * 
+   * @param path path of base folder containing target file
+   * @param filename name of the file to be marked
+   */
+  markFileAsRemoved(path: string, filename: string) {
+    const dir = this.readPathNoCheck(path);
+    dir.file(filename).synchronizationStatus = Sync.No;
+    this.updateSynchronizationStatusBackwards(path);
+  }
+
+  /**
+   * Mark file as downloaded. It requires you to have built 
+   * given path.
+   * 
+   * @param path path of base folder containing target file
+   * @param filename name of the file to be marked
+   */
+  markFileAsDownloaded(path: string, filename: string) {
+    const dir = this.readPathNoCheck(path);
+    dir.file(filename).synchronizationStatus = Sync.Yes;
+    this.updateSynchronizationStatusBackwards(path);
+  }
+
+  /**
+   * Update synchronization status of a folder, and all it's parents.
+   * Called when changing synchronization marks.
+   * @param path path of a folder, which children changed synchronization status
+   */
+  private async updateSynchronizationStatusBackwards(path: string) {
+
   }
 
   /* updateSynchronizationState(path: string) { // TODO: update considering sync states update
@@ -174,7 +269,6 @@ export class DirectoryProvider {
   }
 
   async save() {
-    console.log('### saving...')
     await this.storage.set('root', JSON.stringify(this.root));
     this.file.createFile(this.file.externalRootDirectory, 'root.json', true).then(file => file.createWriter(writer => {
       writer.write(JSON.stringify(this.root));

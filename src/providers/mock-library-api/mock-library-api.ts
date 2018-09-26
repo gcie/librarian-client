@@ -1,10 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Credentials } from '../../models/credentials';
 
 @Injectable()
 export class MockLibraryApi {
 
-  constructor() { }
+  public downloadProgress: EventEmitter<number>;
+  public currentAction: EventEmitter<string>;
+
+  constructor() {
+    this.downloadProgress = new EventEmitter();
+    this.currentAction = new EventEmitter();
+  }
 
   async setCredentials(c: Credentials) {
     return 'Credentials changed successfully';

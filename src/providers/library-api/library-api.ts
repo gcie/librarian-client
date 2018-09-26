@@ -1,5 +1,5 @@
 import { DirectoryProvider } from './../directory/directory';
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { File } from '@ionic-native/file';
 import { FTP } from '@ionic-native/ftp';
 import { Storage } from '@ionic/storage';
@@ -7,6 +7,10 @@ import { Credentials } from '../../models/credentials';
 
 @Injectable()
 export class LibraryApi {
+
+  public downloadProgress: EventEmitter<number>;
+  public currentAction: EventEmitter<string>;
+  public currentlyRemoving: string;
 
   constructor(
     public ftp: FTP,
@@ -18,7 +22,10 @@ export class LibraryApi {
   }
 
   async handleDownload() {
-    for (let downloadPath of this.directory.syncQueue) {
+    this.currentAction.emit('Beginning download');
+    while (this.directory.syncQueue.length > 0) {
+      let downloadPath = this.directory.syncQueue.shift();
+      this.currentAction.emit(`Downloading: ${downloadPath.slice(downloadPath.lastIndexOf('/') + 1)}`);
       let path = downloadPath.slice(0, downloadPath.lastIndexOf('/'));
       await this.createDirectory(path);
       await this.download(downloadPath);
@@ -29,6 +36,7 @@ export class LibraryApi {
     return new Promise((resolve, reject) => {
       this.ftp.download(`${this.file.externalRootDirectory}/Librarian${file}`, file)
         .subscribe(status => {
+          this.downloadProgress.emit(status);
           if (status == 1) {
             resolve();
           }

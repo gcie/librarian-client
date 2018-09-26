@@ -49,22 +49,22 @@ export class FileBrowserPage {
   }
 
   syncFile(file: File, item) {
-    this.directoryProvider.markFileToDownload(this.path, file.name).then(() => this.loadDirectory());
+    this.directoryProvider.markFileAsWaitingForDownload(this.path, file.name).then(() => this.loadDirectory());
     if (item) setTimeout(() => item.close());
   }
 
   syncFolder(folder: Folder, item) {
-    this.directoryProvider.markFolderToDownload(this.path, folder.name).then(() => this.loadDirectory());
+    this.directoryProvider.markFolderAsWaitingForDownload(this.path, folder.name).then(() => this.loadDirectory());
     if (item) setTimeout(() => item.close());
   }
 
   unsyncFile(file: File, item) {
-    this.directoryProvider.markFileToRemove(this.path, file.name).then(() => this.loadDirectory());
+    this.directoryProvider.markFileAsWaitingForRemoval(this.path, file.name).then(() => this.loadDirectory());
     if (item) setTimeout(() => item.close());
   }
 
   unsyncFolder(folder: Folder, item) {
-    this.directoryProvider.markFolderToRemove(this.path, folder.name).then(() => this.loadDirectory());
+    this.directoryProvider.markFolderAsWaitingForRemoval(this.path, folder.name).then(() => this.loadDirectory());
     if (item) setTimeout(() => item.close());
   }
 
