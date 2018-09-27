@@ -1,8 +1,7 @@
 {
   "name": "librarian-client",
   "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "http://ionicframework.com/",
+  "author": "Grzegorz Ciesielski",
   "private": true,
   "scripts": {
     "start": "ionic-app-scripts serve",

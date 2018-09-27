@@ -1,3 +1,3 @@
 # Librarian
 
-Android app allowing you to sync files with local FTP server.
+Ionic/Cordova app for easy file synchronization with FTP server.
